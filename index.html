@@ -20,7 +20,7 @@
   </head>
   <body>
     <center>
-    <h2>Vandaag weggegooid</h2>
+    <h2>Today's waste</h2>
     <svg class="pie"><g></g></svg>
 
     <h1><span id="grams"></span></h1>
@@ -59,19 +59,24 @@
         var g = +e.data.substring(6);
         grams = g - last_weight;
         document.getElementById('grams').innerHTML = grams;
+        console.log(g);
 
       } else if(e.data.indexOf('enter') == 0){
         category = e.data.substring(6);
+        console.log('enter', category)
+        setTimeout(function() {
 
-        for(i in data) {
-          if(data[i].code == category) {
-            data[i].grams += grams;
-            console.log(category, data[i].grams);
+          for(i in data) {
+            if(data[i].code == category) {
+              data[i].grams += grams;
+              console.log('update', category, grams)
+            }
           }
-        }
-        last_weight += grams;
+          last_weight += grams;
+          showData(d3.select('svg'), data);
+        }, 2000);
 
-        showData(d3.select('svg'), data);
+
       }
     }
 
@@ -86,7 +91,7 @@
       var total = data.reduce(function(a, b) { return a + b.grams;  }, 0);
 
       var arcTween = function(d) {
-        var inner_radius = 40;
+        var inner_radius = 20;
         var g = d3.interpolate(inner_radius+this._current, inner_radius+d.data.grams);
         this._current = d.data.grams;
         return function(t) {
